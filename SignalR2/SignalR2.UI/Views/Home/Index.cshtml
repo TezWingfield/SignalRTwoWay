@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>SignalR2 MVC</title>
+    <style type="text/css">
+        .container {
+            background-color: #ccc;
+            border: thick solid red;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <ul id="discussion"></ul>
+    </div>
+    <script src="~/Scripts/jquery-1.6.4.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.0.js"></script>
+    <script src="http://localhost:45569/signalr/hubs"></script>
+    <script>
+        $(document).ready(function () {
+            var chatHub = $.connection.chatHub;
+            $.connection.hub.url = "http://localhost:45569/signalr";
+            // Declare a function on the chat hub so the server can invoke it          
+            // Create a function that the hub can call to broadcast messages.
+            chatHub.client.broadcastMessage = function (name, message) {
+                // Html encode display name and message. 
+                var encodedName = $('<div />').text(name).html();
+                var encodedMsg = $('<div />').text(message).html();
+                // Add the message to the page. 
+                $('#discussion').append('<li><strong>' + encodedName
+                    + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
+            };
+            $.connection.hub.start(function () {
+                //We can also fire back :-) Happy days
+            });
+        });
+    </script>
+</body>
+</html>
